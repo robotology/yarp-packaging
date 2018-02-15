@@ -79,7 +79,7 @@ fi
 # Reset the chroot (this is for quick tests only; more reliable method
 # is to delete and start over)
 sudo cp yarp-*.deb test_chroot/tmp || exit 1
-run_in_chroot test_chroot "yes | apt-get remove yarp" 
+run_in_chroot test_chroot "apt-get -y remove yarp" 
 
 DEPENDENCIES_DISTRIB="DEPENDENCIES_${PLATFORM_KEY}"
 BACKPORTS_URL_DISTRIB="BACKPORTS_URL_${PLATFORM_KEY}"
@@ -90,7 +90,7 @@ if [ "${!BACKPORTS_URL_DISTRIB}" != "" ]; then
 fi
 
 # Install tool to load .deb and its dependencies.  Not available on etch
-run_in_chroot test_chroot "yes | apt-get install gdebi-core" || {
+run_in_chroot test_chroot "apt-get -y install gdebi-core" || {
     echo "=============================================================="
     echo "= gdebi-core not available"
     echo "= you will need to test by hand for this platform, as follows:"

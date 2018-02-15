@@ -83,11 +83,11 @@ fi
 
 # Install basic dependencies
 if [ "$DEPENDENCIES_COMMON" != "" ]; then
-  run_in_chroot build_chroot "yes | apt-get install $DEPENDENCIES_COMMON" || exit 1
+  run_in_chroot build_chroot "apt-get -y install $DEPENDENCIES_COMMON" || exit 1
 fi
 
 if [ "${!DEPENDENCIES_DISTRIB}" != "" ]; then
-  run_in_chroot build_chroot "yes | apt-get install ${!DEPENDENCIES_DISTRIB}" || exit 1
+  run_in_chroot build_chroot "apt-get -y install ${!DEPENDENCIES_DISTRIB}" || exit 1
 fi
 
 if [ "$YARP_SOURCES_VERSION" != "" ]; then

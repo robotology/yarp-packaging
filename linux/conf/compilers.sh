@@ -1,7 +1,11 @@
-#PLATFORMS="wheezy jessie trusty wily xenial"
-PLATFORMS="jessie stretch xenial yakkety zesty"
+PLATFORMS="jessie stretch xenial artful"
 
-HARDWARE="i386 amd64"
+stretch_MIRROR="http://giano.com.dist.unige.it/debian/"
+jessie_MIRROR="http://giano.com.dist.unige.it/debian/"
+artful_MIRROR="http://giano.com.dist.unige.it/ubuntu/"
+xenial_MIRROR="http://giano.com.dist.unige.it/ubuntu/"
+
+HARDWARE="amd64 i386"
 
 # exceptions can be added as follows
 # SKIP_lenny_amd64=1
