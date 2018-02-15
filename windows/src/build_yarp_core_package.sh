@@ -282,7 +282,7 @@ nsis_setup ace_dlls
 # Removing GSL
 #nsis_setup gsl_headers
 #nsis_setup gsl_libraries
-nsis_setup_eigen_base
+nsis_setup eigen_base
 
 nsis_setup gtkmm_headers
 nsis_setup gtkmm_libraries
