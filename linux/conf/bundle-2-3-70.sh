@@ -7,6 +7,7 @@ DEPENDENCIES_stretch=""
 DEPENDENCIES_xenial=""
 DEPENDENCIES_yakkety=""
 DEPENDENCIES_zesty=""
+DEPENDENCIES_artful=""
 
 #BACKPORTS_URL_wheezy="http://http.debian.net/debian"
 export YARP_PACKAGE_VERSION=2.3.70
