@@ -1,5 +1,5 @@
 #PLATFORMS="wheezy jessie trusty wily xenial"
-PLATFORMS="jessie xenial yakkety"
+PLATFORMS="jessie stretch xenial yakkety zesty"
 
 HARDWARE="i386 amd64"
 

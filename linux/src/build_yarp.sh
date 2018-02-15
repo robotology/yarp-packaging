@@ -162,9 +162,11 @@ run_in_chroot build_chroot "cd $CHROOT_BUILD && rm -rf deb *.deb" || exit 1
 YARP_PACKAGE_NAME="yarp-${YARP_PACKAGE_VERSION}-${YARP_DEB_REVISION}~${PLATFORM_KEY}_${PLATFORM_HARDWARE}.deb"
 PACK="deb/yarp-${YARP_PACKAGE_VERSION}-${YARP_DEB_REVISION}~${PLATFORM_KEY}+${PLATFORM_HARDWARE}"
 run_in_chroot build_chroot "cd $CHROOT_BUILD && mkdir -p $PACK/DEBIAN" || exit 1
-run_in_chroot build_chroot "cd $CHROOT_BUILD && cp _CPack_Packages/Linux/DEB/yarp-*-Linux/control $PACK/DEBIAN" || exit 1
-run_in_chroot build_chroot "cd $CHROOT_BUILD && cp _CPack_Packages/Linux/DEB/yarp-*-Linux/md5sums $PACK/DEBIAN" || exit 1
-run_in_chroot build_chroot "cd $CHROOT_BUILD && cp -R _CPack_Packages/Linux/DEB/yarp-*-Linux/usr $PACK/usr" || exit 1
+run_in_chroot build_chroot "cd $CHROOT_BUILD && cp _CPack_Packages/Linux/DEB/yarp_*_/control $PACK/DEBIAN" || exit 1
+run_in_chroot build_chroot "cd $CHROOT_BUILD && cp _CPack_Packages/Linux/DEB/yarp_*_/md5sums $PACK/DEBIAN" || exit 1
+run_in_chroot build_chroot "cd $CHROOT_BUILD && cp -R _CPack_Packages/Linux/DEB/yarp_*_/usr $PACK/usr" || exit 1
+#run_in_chroot build_chroot "cd $CHROOT_BUILD && mkdir -p $PACK/etc/bash_completion.d" || exit 1
+#run_in_chroot build_chroot "cd $CHROOT_BUILD && cp ${CHROOT_SRC}/scripts/yarp_completion $PACK/etc/bash_completion.d/yarp" || exit 1
 run_in_chroot build_chroot "cd $CHROOT_BUILD && dpkg -b $PACK $YARP_PACKAGE_NAME" || exit 1
 
 # Copy .deb to somewhere easier to find
