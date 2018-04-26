@@ -1,9 +1,10 @@
-PLATFORMS="jessie stretch xenial artful"
+PLATFORMS="jessie stretch xenial artful bionic"
 
 stretch_MIRROR="http://giano.com.dist.unige.it/debian/"
 jessie_MIRROR="http://giano.com.dist.unige.it/debian/"
 artful_MIRROR="http://giano.com.dist.unige.it/ubuntu/"
 xenial_MIRROR="http://giano.com.dist.unige.it/ubuntu/"
+bionic_MIRROR="http://mi.mirror.garr.it/mirrors/ubuntu"
 
 HARDWARE="amd64 i386"
 
