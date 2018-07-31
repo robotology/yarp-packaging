@@ -313,7 +313,16 @@ QT_SUB="$QT_PATH"
 
 # Add YARP material to NSIS
 cd $YARP_DIR_UNIX || exit 1
-YARP_LICENSE="$YARP_ROOT/LGPL.txt"
+YARP_LICENSE="$YARP_ROOT/LICENSE"
+cd $YARP_ROOT || exit 1
+nsis_add yarp_base "LICENSE" ${YARP_SUB}/LICENSE
+nsis_add yarp_base "COPYING" ${YARP_SUB}/COPYING
+nsis_add yarp_base "LICENSE.Apache-2.0" ${YARP_SUB}/LICENSE.Apache-2.0
+nsis_add yarp_base "LICENSE.BSD" ${YARP_SUB}/LICENSE.BSD
+nsis_add yarp_base "LICENSE.GPL-2" ${YARP_SUB}/LICENSE.GPL-2
+nsis_add yarp_base "LICENSE.GPL-3" ${YARP_SUB}/LICENSE.GPL-3
+nsis_add yarp_base "LICENSE.LGPL-2.1" ${YARP_SUB}/LICENSE.GPL-2.1
+
 # nsis_add yarp_base YARPConfigForInstall.cmake YARPConfig.cmake
 cd $YARP_DIR_UNIX/install || exit 1
 nsis_add_recurse yarp_base share ${YARP_SUB}/share
@@ -321,33 +330,40 @@ cd $YARP_DIR_UNIX/install/lib || exit 1
 
 mkdir -p temp
 cd temp
-cp $YARP_DIR_UNIX/install/cmake/YARPConfig.cmake . || exit 1
-cp $YARP_DIR_UNIX/install/cmake/YARPConfigVersion.cmake . || exit 1
-cp $YARP_DIR_UNIX/install/cmake/YARPTargets.cmake . || exit 1
-cp $YARP_DIR_UNIX/install/cmake/YARPTargets-release.cmake . || exit 1
-if $add_debug; then
-  cp $YARP_DIR_DBG_UNIX/install/cmake/YARPTargets-debug.cmake . || exit 1
+cp $YARP_DIR_UNIX/install/cmake/YARP*.cmake . || exit 1
+#cp $YARP_DIR_UNIX/install/cmake/YARPConfig.cmake . || exit 1
+#cp $YARP_DIR_UNIX/install/cmake/YARPConfigVersion.cmake . || exit 1
+#cp $YARP_DIR_UNIX/install/cmake/YARPTargets.cmake . || exit 1
+#cp $YARP_DIR_UNIX/install/cmake/YARPTargets-release.cmake . || exit 1
+
+if ! $add_debug; then
+  rm YARP*Targets-debug.cmake || exit 1
 fi
 #sed -i 's|[^"]*/YARPTargets.cmake|include(${CMAKE_CURRENT_LIST_DIR}/../lib/YARP/YARPTargets.cmake|' YARPConfig.cmake
 #sed -i 's|[^"]*/install|${CMAKE_CURRENT_LIST_DIR}/..|g' YARPConfig.cmake
-for k in release debug; do
-  if [ -e YARPTargets-$k.cmake ] ; then
-# Removing GSL  
-    #for f in gsl.lib libgsl.a gslcblas.lib libgslcblas.a; do
-    #  sed -i "s|[^;]*/$f|\${_IMPORT_PREFIX}/../${GSL_SUB}/lib/$f|g" YARPTargets-$k.cmake
-    #done
-    for f in ACE.lib libACE.dll ACEd.lib libACEd.dll; do
-      sed -i "s|[^;]*/$f|\${_IMPORT_PREFIX}/../${ACE_SUB}/lib/$f|g" YARPTargets-$k.cmake
-    done
-  fi
+
+sed -i "s|[^;]*/$f|\${_IMPORT_PREFIX}/../${ACE_SUB}/lib/$f|g" YARP*Targets-*.cmake
+#for k in release debug; do
+#  if [ -e YARPTargets-$k.cmake ] ; then
+## Removing GSL  
+#    #for f in gsl.lib libgsl.a gslcblas.lib libgslcblas.a; do
+#    #  sed -i "s|[^;]*/$f|\${_IMPORT_PREFIX}/../${GSL_SUB}/lib/$f|g" YARPTargets-$k.cmake
+#    #done
+#    for f in ACE.lib libACE.dll ACEd.lib libACEd.dll; do
+#      sed -i "s|[^;]*/$f|\${_IMPORT_PREFIX}/../${ACE_SUB}/lib/$f|g" YARPTargets-$k.cmake
+#    done
+#  fi
+#done
+for f in `ls -1 *.cmake`; do
+  nsis_add yarp_base $f ${YARP_SUB}/cmake/$f
 done
-nsis_add yarp_base YARPConfig.cmake ${YARP_SUB}/cmake/YARPConfig.cmake
-nsis_add yarp_base YARPConfigVersion.cmake ${YARP_SUB}/cmake/YARPConfigVersion.cmake
-nsis_add yarp_base YARPTargets.cmake ${YARP_SUB}/cmake/YARPTargets.cmake
-nsis_add yarp_base YARPTargets-release.cmake ${YARP_SUB}/cmake/YARPTargets-release.cmake
-if $add_debug; then
-  nsis_add yarp_base YARPTargets-debug.cmake ${YARP_SUB}/cmake/YARPTargets-debug.cmake
-fi
+#nsis_add yarp_base YARPConfigVersion.cmake ${YARP_SUB}/cmake/YARPConfigVersion.cmake
+#nsis_add yarp_base YARPTargets.cmake ${YARP_SUB}/cmake/YARPTargets.cmake
+#nsis_add yarp_base YARPConfig.cmake ${YARP_SUB}/cmake/YARPConfig.cmake
+#nsis_add yarp_base YARPTargets-release.cmake ${YARP_SUB}/cmake/YARPTargets-release.cmake
+#if $add_debug; then
+#  nsis_add yarp_base YARPTargets-debug.cmake ${YARP_SUB}/cmake/YARPTargets-debug.cmake
+#fi
 
 cd $YARP_DIR_UNIX/install/lib || exit 1
 for f in `ls -1 *.$LIBEXT | grep -v YARP_math`; do

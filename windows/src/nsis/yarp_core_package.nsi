@@ -45,11 +45,11 @@ RequestExecutionLevel admin
 ;--------------------------------
 ;Pages
 
-  !define MUI_PAGE_HEADER_TEXT "Welcome to YARP, Yet Another Robot Platform"
-  !define MUI_PAGE_HEADER_SUBTEXT "YARP.  Free software for free robots."
-  !define MUI_LICENSEPAGE_TEXT_TOP "YARP is distributed under the LGPL Free Software license."
-  !define MUI_LICENSEPAGE_TEXT_BOTTOM "You are free to use YARP personally without agreeing to this license. Follow the terms of the license if you wish to take advantage of the extra rights it grants."
-  !define MUI_LICENSEPAGE_BUTTON "Next >"
+  !define MUI_PAGE_HEADER_TEXT "Welcome to YARP"
+  !define MUI_PAGE_HEADER_SUBTEXT "Yet Another Robot Platform"
+  !define MUI_LICENSEPAGE_TEXT_TOP "Most YARP components are released under the terms of the BSD-3-Clause. Some optional components are released under the terms of the LGPL-2.1 or later, GPL-2.0 or later, GPL-3.0 or later, or Apache-2.0 License."
+  !define MUI_LICENSEPAGE_TEXT_BOTTOM "Material included in YARP is Copyright of Istituto Italiano di Tecnologia (IIT), RobotCub Consortium and other contributors."
+#  !define MUI_LICENSEPAGE_BUTTON "Next >"
   !insertmacro MUI_PAGE_LICENSE "${YARP_LICENSE}"
   !insertmacro MUI_PAGE_COMPONENTS
   !insertmacro MUI_PAGE_DIRECTORY

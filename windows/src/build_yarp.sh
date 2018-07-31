@@ -147,11 +147,10 @@ echo "Using EIGEN from $EIGEN_DIR"
 (
 cat << XXX
   source $SETTINGS_SOURCE_DIR/src/restrict_path.sh
-# Removing GSL
-#  "$CMAKE_BIN" -G "$OPT_GENERATOR" $OPT_CMAKE_OPTION $YARP_CMAKE_OPTIONS -DCMAKE_INSTALL_PREFIX=$YARP_DIR/install -DGSL_DIR="$GSL_DIR" -DGTK_BASEPATH="$GTK_BASEPATH" ../$source_name || exit 1
   "$CMAKE_BIN" -G "$OPT_GENERATOR" $OPT_CMAKE_OPTION $YARP_CMAKE_OPTIONS -DCMAKE_INSTALL_PREFIX=$YARP_DIR/install -DEIGEN3_INCLUDE_DIR="$EIGEN_DIR" -DGTK_BASEPATH="$GTK_BASEPATH" ../$source_name || exit 1
   target_name "YARP"
-  $OPT_BUILDER  \$user_target \$TARGET $OPT_CONFIGURATION_COMMAND $OPT_PLATFORM_COMMAND || exit 1
+  export PATH="$(cygpath ${ACE_ROOT}/lib):\$PATH" ; echo "*** PATH is \$PATH"; $OPT_BUILDER  \$user_target \$TARGET $OPT_CONFIGURATION_COMMAND $OPT_PLATFORM_COMMAND || exit 1
+  # This is necessary because yarpidl_rosmsg links to  ACE.dll
   # if [ ! -e install ]; then
   "$CMAKE_BIN" --build . --target install --config ${OPT_BUILD} || exit 1
   # fi

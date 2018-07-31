@@ -93,6 +93,11 @@ if [ ! "k$OPT_COMPILER" = "kany" ]; then
 
   OPT_PLATFORM=""
   OPT_VCNNN=""
+  if [ "$OPT_COMPILER" == "v15" ] ; then
+    OPT_PLATFORM=v150
+    OPT_VCNNN="VC150"
+    OPT_HUMAN_PLATFORM_NAME="msvc15"
+  fi
   if [ "$OPT_COMPILER" == "v14" ] ; then
     OPT_PLATFORM=v140
     OPT_VCNNN="VC140"
@@ -140,6 +145,15 @@ if [ ! "k$OPT_COMPILER" = "kany" ]; then
   OPT_CONFIGURATION_COMMAND="/p:Configuration=$OPT_BUILD"
 
   OPT_GENERATOR=""
+  if [ "$OPT_COMPILER" == "v15" ] ; then
+    if [ "$OPT_VARIANT" == "x86" ] ; then
+      OPT_GENERATOR="Visual Studio 15"
+            REDIST_VARIANT="x86"
+    elif [ "$OPT_VARIANT" == "x64" ] || [ "$OPT_VARIANT" == "amd64" ] || [ "$OPT_VARIANT" == "x86_amd64" ] ; then
+      OPT_GENERATOR="Visual Studio 15 Win64"
+            REDIST_VARIANT="x64"
+    fi    
+  fi
   if [ "$OPT_COMPILER" == "v14" ] ; then
     if [ "$OPT_VARIANT" == "x86" ] ; then
       OPT_GENERATOR="Visual Studio 14"

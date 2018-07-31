@@ -29,8 +29,13 @@ source $SETTINGS_SOURCE_DIR/src/process_options.sh $* || {
 	exit 1
 }
 
-if [ "k$BUNDLE_CMAKE_VERSION" = "k" ]; then
+if [ "$BUNDLE_CMAKE_VERSION" == "" ]; then
 	echo "set BUNDLE_CMAKE_VERSION"
+	exit 1
+fi
+
+if [ "k$BUNDLE_CMAKE_URL" == "" ]; then
+	echo "set BUNDLE_CMAKE_URL"
 	exit 1
 fi
 
@@ -38,7 +43,7 @@ fi
 fname=cmake-$BUNDLE_CMAKE_VERSION
 if [ ! -e $fname.zip ]; then
 	CMAKE_DIR=`echo $BUNDLE_CMAKE_VERSION | sed "s/\.[-0-9]*$//"`
-	zipname="http://www.cmake.org/files/v$CMAKE_DIR/cmake-$BUNDLE_CMAKE_VERSION-win32-x86.zip"
+	zipname="${BUNDLE_CMAKE_URL}/v$CMAKE_DIR/cmake-$BUNDLE_CMAKE_VERSION-win32-x86.zip"
 	wget -O $fname.zip $zipname || (
 		echo "Cannot fetch CMAKE"
 		rm -f $fname.zip
