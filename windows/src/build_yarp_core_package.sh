@@ -342,7 +342,10 @@ fi
 #sed -i 's|[^"]*/YARPTargets.cmake|include(${CMAKE_CURRENT_LIST_DIR}/../lib/YARP/YARPTargets.cmake|' YARPConfig.cmake
 #sed -i 's|[^"]*/install|${CMAKE_CURRENT_LIST_DIR}/..|g' YARPConfig.cmake
 
-sed -i "s|[^;]*/$f|\${_IMPORT_PREFIX}/../${ACE_SUB}/lib/$f|g" YARP*Targets-*.cmake
+for f in ACE.lib libACE.dll ACEd.lib libACEd.dll; do
+  sed -i "s|[^;]*/$f|\${_IMPORT_PREFIX}/../${ACE_SUB}/lib/$f|g" YARP*Targets-*.cmake
+  done
+  
 #for k in release debug; do
 #  if [ -e YARPTargets-$k.cmake ] ; then
 ## Removing GSL  
