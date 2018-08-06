@@ -140,7 +140,7 @@ done
 # Here's the list of all available targets we care about
 # Removing GSL
 #full_target_list="cmake ace gsl gtkmm qt yarp nsis yarp_core_package"
-full_target_list="cmake ace eigen gtkmm qt yarp nsis yarp_core_package"
+full_target_list="cmake ace eigen gtkmm qt libjpeg yarp nsis yarp_core_package"
 
 # For package $PACKAGE, depend_$PACKAGE contains a list of packages
 # it depends on
@@ -151,10 +151,11 @@ depend_ace=
 depend_eigen=
 depend_gtkmm=
 depend_qt=
+depend_libjpeg=
 # Removing GSL
 #depend_yarp="cmake ace gsl gtkmm qt"
 #depend_icub="cmake yarp ace gsl gtkmm"
-depend_yarp="cmake eigen ace gtkmm qt"
+depend_yarp="cmake eigen ace gtkmm qt libjpeg"
 depend_icub="cmake eigen yarp ace gtkmm"
 depend_nsis=
 depend_yarp_core_package="yarp nsis"

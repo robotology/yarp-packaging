@@ -165,6 +165,15 @@ if [ "${!QT_VERSION_TAG}" != "" ]; then
   }
 fi
 
+# Pick up Qt paths
+LIBJPEG_VERSION_TAG="BUNDLE_LIBJPEG_VERSION_${OPT_VARIANT}"
+if [ "${!LIBJPEG_VERSION_TAG}" != "" ]; then
+  source libjpeg_${OPT_VARIANT}_${base_build}.sh || {
+    echo "Cannot find corresponding libjpeg-turbo build"
+    exit 1
+  }
+fi
+
 # Pick up NSIS paths
 source nsis_any_any_any.sh || {
   echo "Cannot find corresponding NSIS build"
@@ -310,6 +319,7 @@ ACE_SUB="$ACE_PATH"
 EIGEN_SUB="eigen-$BUNDLE_EIGEN_VERSION"
 GTKMM_SUB="$GTKMM_PATH"
 QT_SUB="$QT_PATH"
+LIBJPEG_SUB="$LIBJPEG_PATH"
 
 # Add YARP material to NSIS
 cd $YARP_DIR_UNIX || exit 1
@@ -497,6 +507,16 @@ if [ "$QT_DIR" != "" ]; then
   nsis_add_recurse qt_guis qt5 ${YARP_SUB}/lib/qt5
 fi
 
+# Add LIBJEPG-TURBO material to NSIS
+if [ "$LIBJPEG_DIR" != "" ]; then
+  cd $LIBJPEG_DIR || exit 1
+  nsis_add_recurse libjpeg_files bin ${QT_SUB}/bin
+  nsis_add_recurse libjpeg_files bin ${QT_SUB}/classes
+  nsis_add_recurse libjpeg_files bin ${QT_SUB}/doc
+  nsis_add_recurse libjpeg_files bin ${QT_SUB}/include
+  nsis_add_recurse libjpeg_files bin ${QT_SUB}/lib
+fi
+
 # Add ACE material to NSIS
 cd $ACE_DIR/lib || exit 1
 if [ ! -e $ACE_LIBNAME.dll ]; then
@@ -571,6 +591,10 @@ if [ "$GTKMM_SUB" != "" ]; then
 fi
 if [ "${QT_SUB}" != "" ]; then
   NSIS_PARAMETERS="${NSIS_PARAMETERS} -DQT_SUB=$QT_SUB"
+fi
+
+if [ "${LIBJPEG_SUB}" != "" ]; then
+  NSIS_PARAMETERS="${NSIS_PARAMETERS} -DLIBJPEG_SUB=$LIBJPEG_SUB"
 fi
 
 $NSIS_BIN $NSIS_PARAMETERS "$(cygpath -m $SETTINGS_SOURCE_DIR/src/nsis/yarp_core_package.nsi)" || exit 1

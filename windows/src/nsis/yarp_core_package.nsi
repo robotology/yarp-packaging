@@ -316,6 +316,22 @@ SectionGroupEnd
   !echo "Skipping Qt material" 
 !endif
 
+!ifdef LIBJPEG_SUB
+SectionGroup "libjpeg-turbo" SecLibjpeg
+   Section "libjpeg-turbo files" SecLibjpegFile
+      SetOutPath "$INSTDIR"
+      !include ${NSIS_OUTPUT_PATH}\libjpeg_files_add.nsi
+  SectionEnd
+  Section "Set environment variables" SecLibjpegEnv
+    !insertmacro AddEnv1 JPEG_INCLUDE_DIR "$INSTDIR\${LIBJPEG_SUB}\include"
+    !insertmacro AddEnv1 JPEG_LIBRARY "$INSTDIR\${LIBJPEG_SUB}\lib\libjpeg.lib"
+    SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
+   SectionEnd
+SectionGroupEnd
+!else
+  !echo "Skipping libjpeg-turbo material" 
+!endif
+
 Section "Visual Studio Runtime (nonfree)" SecVcDlls
   SetOutPath "$INSTDIR"
   !include ${NSIS_OUTPUT_PATH}\yarp_vc_dlls_add.nsi
@@ -462,7 +478,10 @@ Section "Uninstall"
   !ifdef QT_SUB
     RMDir /r "$INSTDIR\${QT_SUB}"
   !endif
-
+  !ifdef LIBJPEG_SUB
+    RMDir /r "$INSTDIR\${LIBJPEG_SUB}"
+  !endif
+  
   # cleanup YARP registry entries
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}\YARP\Common"
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}\YARP\${YARP_SUB}"

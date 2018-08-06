@@ -99,6 +99,13 @@ else
     echo "NO QT build"
 fi
 
+# Pick up LIBJPEG paths
+if [ -f "libjpeg_${OPT_VARIANT}_${OPT_BUILD}.sh" ]; then
+  source libjpeg_${OPT_VARIANT}_${OPT_BUILD}.sh
+else
+    echo "NO LIBJPEG build"
+fi
+
 # Go ahead and download YARP
 echo "BUNDLE_YARP_VERSION: $BUNDLE_YARP_VERSION"
 source_name="yarp"
@@ -147,7 +154,7 @@ echo "Using EIGEN from $EIGEN_DIR"
 (
 cat << XXX
   source $SETTINGS_SOURCE_DIR/src/restrict_path.sh
-  "$CMAKE_BIN" -G "$OPT_GENERATOR" $OPT_CMAKE_OPTION $YARP_CMAKE_OPTIONS -DCMAKE_INSTALL_PREFIX=$YARP_DIR/install -DEIGEN3_INCLUDE_DIR="$EIGEN_DIR" -DGTK_BASEPATH="$GTK_BASEPATH" ../$source_name || exit 1
+  "$CMAKE_BIN" -G "$OPT_GENERATOR" $OPT_CMAKE_OPTION $YARP_CMAKE_OPTIONS -DCMAKE_INSTALL_PREFIX=$YARP_DIR/install -DEIGEN3_INCLUDE_DIR="$EIGEN_DIR" -DGTK_BASEPATH="$GTK_BASEPATH" -DJPEG_INCLUDE_DIR="$JPEG_INCLUDE_DIR" -DJPEG_LIBRARY="$JPEG_LIBRARY" ../$source_name || exit 1
   target_name "YARP"
   export PATH="$(cygpath ${ACE_ROOT}/lib):\$PATH" ; echo "*** PATH is \$PATH"; $OPT_BUILDER  \$user_target \$TARGET $OPT_CONFIGURATION_COMMAND $OPT_PLATFORM_COMMAND || exit 1
   # This is necessary because yarpidl_rosmsg links to  ACE.dll
