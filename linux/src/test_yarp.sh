@@ -79,6 +79,7 @@ fi
 # Reset the chroot (this is for quick tests only; more reliable method
 # is to delete and start over)
 sudo cp yarp-*.deb test_chroot/tmp || exit 1
+run_in_chroot test_chroot "apt-get -y install gnupg" 
 run_in_chroot test_chroot "apt-get -y remove yarp" 
 
 DEPENDENCIES_DISTRIB="DEPENDENCIES_${PLATFORM_KEY}"

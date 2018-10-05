@@ -1,12 +1,10 @@
-#PLATFORMS="stretch artful bionic"
-PLATFORMS="stretch bionic xenial"
+PLATFORMS="bionic xenial"
 
-stretch_MIRROR="http://giano.com.dist.unige.it/debian/"
-artful_MIRROR="http://giano.com.dist.unige.it/ubuntu/"
-bionic_MIRROR="http://mi.mirror.garr.it/mirrors/ubuntu"
-xenial_MIRROR="http://mi.mirror.garr.it/mirrors/ubuntu"
+stretch_MIRROR="http://deb.debian.org/debian/"
+bionic_MIRROR="http://it.archive.ubuntu.com/ubuntu/"
+xenial_MIRROR="http://it.archive.ubuntu.com/ubuntu/"
 
-HARDWARE="amd64 i386"
+HARDWARE="i386 amd64"
 
 # exceptions can be added as follows
 # SKIP_lenny_amd64=1
