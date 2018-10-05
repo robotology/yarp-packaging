@@ -103,7 +103,15 @@ fi
 if [ -f "libjpeg_${OPT_VARIANT}_${OPT_BUILD}.sh" ]; then
   source libjpeg_${OPT_VARIANT}_${OPT_BUILD}.sh
 else
-    echo "NO LIBJPEG build"
+  echo "NO LIBJPEG build"
+fi
+
+# Pick up OPENCV paths
+if [ -f "opencv_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh" ]; then
+  source opencv_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh
+  echo "Using OpenCV from ${OpenCV_DIR}"
+else
+    echo "NO OPENCV build"
 fi
 
 # Go ahead and download YARP

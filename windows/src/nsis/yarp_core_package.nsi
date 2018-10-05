@@ -47,7 +47,7 @@ RequestExecutionLevel admin
 
   !define MUI_PAGE_HEADER_TEXT "Welcome to YARP"
   !define MUI_PAGE_HEADER_SUBTEXT "Yet Another Robot Platform"
-  !define MUI_LICENSEPAGE_TEXT_TOP "Most YARP components are released under the terms of the BSD-3-Clause. Some optional components are released under the terms of the LGPL-2.1 or later, GPL-2.0 or later, GPL-3.0 or later, or Apache-2.0 License."
+  !define MUI_LICENSEPAGE_TEXT_TOP "Most YARP components are released under the terms of the BSD-3-Clause. Some optional components are released LGPL-2.1, GPL-2.0, GPL-3.0 Apache-2.0 License."
   !define MUI_LICENSEPAGE_TEXT_BOTTOM "Material included in YARP is Copyright of Istituto Italiano di Tecnologia (IIT), RobotCub Consortium and other contributors."
 #  !define MUI_LICENSEPAGE_BUTTON "Next >"
   !insertmacro MUI_PAGE_LICENSE "${YARP_LICENSE}"
@@ -202,7 +202,7 @@ SectionGroupEnd
     ; SetOutPath "$INSTDIR"
     ; !include ${NSIS_OUTPUT_PATH}\gsl_libraries_add.nsi
   ; SectionEnd
-  SectionGroup "EIGEN library" SecEigen
+SectionGroup "EIGEN library" SecEigen
   Section "EIGEN libraries" SecEigenLibraries
     SetOutPath "$INSTDIR"
     !include ${NSIS_OUTPUT_PATH}\eigen_base_add.nsi
@@ -232,8 +232,45 @@ SectionGroupEnd
     !insertmacro AddEnv1 EIGEN3_ROOT "$INSTDIR\${EIGEN_SUB}"
     SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
   SectionEnd
-
 SectionGroupEnd
+
+!ifdef OPENCV_SUB
+SectionGroup "opencv" SecOpencv
+  Section "opencv files" SecOpencvFile
+    SetOutPath "$INSTDIR"
+    !include ${NSIS_OUTPUT_PATH}\opencv_files_add.nsi
+  SectionEnd
+  Section "Set environment variables" SecOpencvEnv
+    !insertmacro AddEnv1 OpenCV_DIR "$INSTDIR\${OPENCV_SUB}"
+    ${If} ${YARP_PLATFORM} == "x64"
+    ${OrIf} ${YARP_PLATFORM} == "amd64"
+    ${OrIf} ${YARP_PLATFORM} == "x86_amd64"
+      StrCpy $0 "x64"
+    ${EndIf}
+    ${If} ${YARP_PLATFORM} == "x86"
+      StrCpy $0 "x86"
+    ${EndIf}
+    ${If} ${YARP_VARIANT} == "v10"
+      StrCpy $1 "vc10"
+    ${EndIf}
+    ${If} ${YARP_VARIANT} == "v11"
+      StrCpy $1 "vc11"
+    ${EndIf}
+    ${If} ${YARP_VARIANT} == "v12"
+      StrCpy $1 "vc12"
+    ${EndIf}
+    ${If} ${YARP_VARIANT} == "v14"
+      StrCpy $1 "vc14"
+    ${EndIf}
+    ${If} ${YARP_VARIANT} == "v15"
+      StrCpy $1 "vc15"
+    ${EndIf}
+    !insertmacro AddEnv "PATH" "$INSTDIR\${OPENCV_SUB}\$0\$1\bin"
+  SectionEnd
+SectionGroupEnd
+!else
+  !echo "Skipping opencv material"
+!endif
 
 !ifdef GTKMM_SUB
 SectionGroup "GTKMM" SecGtkmm
@@ -273,7 +310,7 @@ SectionGroup "GTKMM" SecGtkmm
   SectionEnd
 SectionGroupEnd
 !else
-    !echo "Skipping GTK material"
+  !echo "Skipping GTK material"
 !endif
 
 !ifdef QT_SUB
@@ -299,21 +336,22 @@ SectionGroup "Qt" SecQt
       FileWrite $1 'echo Remember to call vcvarsall.bat to complete environment setup!'
       FileClose $1
   SectionEnd
+  Section "QT GUIs" SecQtGuis
+    !echo "Skipping Qt guis" 
+    SetOutPath "$INSTDIR"
+    !include ${NSIS_OUTPUT_PATH}\qt_guis_add.nsi
+  SectionEnd
   Section "Set environment variables" SecQtEnv
     !insertmacro AddEnv "PATH" "$INSTDIR\${QT_SUB}\bin"
     !insertmacro AddEnv "LIB" "$INSTDIR\${QT_SUB}\lib"
     !insertmacro AddEnv "INCLUDE" "$INSTDIR\${QT_SUB}\include"
     !insertmacro AddEnv1 Qt5_DIR "$INSTDIR\${QT_SUB}\lib\cmake\Qt5"
     SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
-   SectionEnd
-  Section "QT GUIs" SecQtGuis
-      !echo "Skipping Qt guis" 
- 	  SetOutPath "$INSTDIR"
-	  !include ${NSIS_OUTPUT_PATH}\qt_guis_add.nsi
   SectionEnd
 SectionGroupEnd
 !else
   !echo "Skipping Qt material" 
+  Abort
 !endif
 
 !ifdef LIBJPEG_SUB
@@ -326,10 +364,10 @@ SectionGroup "libjpeg-turbo" SecLibjpeg
     !insertmacro AddEnv1 JPEG_INCLUDE_DIR "$INSTDIR\${LIBJPEG_SUB}\include"
     !insertmacro AddEnv1 JPEG_LIBRARY "$INSTDIR\${LIBJPEG_SUB}\lib\libjpeg.lib"
     SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
-   SectionEnd
+  SectionEnd
 SectionGroupEnd
 !else
-  !echo "Skipping libjpeg-turbo material" 
+  !echo "Skipping libjpeg-turbo material"
 !endif
 
 Section "Visual Studio Runtime (nonfree)" SecVcDlls
@@ -403,6 +441,8 @@ LangString DESC_SecAce ${LANG_ENGLISH} "The Adaptive Communications Environment,
 ; Removing GSL
 ;LangString DESC_SecGsl ${LANG_ENGLISH} "The YARP math library.  Based on the GNU Scientific Library.  This is therefore GPL software, not the LGPL like YARP."
 LangString DESC_SecEigen ${LANG_ENGLISH} "The YARP math library.  Based on the EIGEN Library."
+LangString DESC_SecOpencv ${LANG_ENGLISH} "Open Source Computer Vision library (OpenCV)."
+LangString DESC_SecLibjpeg ${LANG_ENGLISH} "Libjpeg-turbo Library."
 LangString DESC_SecGtkmm ${LANG_ENGLISH} "User interface library.  Not needed to use the YARP library.  Used by the yarpview program."
 LangString DESC_SecPrograms ${LANG_ENGLISH} "YARP programs, including the standard YARP companion, and the standard YARP name server."
 LangString DESC_SecLibraries ${LANG_ENGLISH} "Libraries for linking against YARP."
@@ -423,6 +463,9 @@ LangString DESC_SecVcDlls ${LANG_ENGLISH} "Visual Studio runtime redistributable
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
 !insertmacro MUI_DESCRIPTION_TEXT ${SecYarp} $(DESC_SecYarp)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkmm} $(DESC_SecGtkmm)
+!insertmacro MUI_DESCRIPTION_TEXT ${SecEigen} $(DESC_SecEigen)
+!insertmacro MUI_DESCRIPTION_TEXT ${SecOpencv} $(DESC_SecOpenCv)
+!insertmacro MUI_DESCRIPTION_TEXT ${SecLibjpeg} $(DESC_SecLibjpeg)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecPrograms} $(DESC_SecPrograms)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecLibraries} $(DESC_SecLibraries)
 !insertmacro MUI_DESCRIPTION_TEXT ${SecHeaders} $(DESC_SecHeaders)
@@ -480,6 +523,9 @@ Section "Uninstall"
   !endif
   !ifdef LIBJPEG_SUB
     RMDir /r "$INSTDIR\${LIBJPEG_SUB}"
+  !endif
+  !ifdef OPENCV_SUB
+    RMDir /r "$INSTDIR\${OPENCV_SUB}"
   !endif
   
   # cleanup YARP registry entries

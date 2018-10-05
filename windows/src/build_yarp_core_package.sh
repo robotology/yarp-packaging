@@ -160,17 +160,27 @@ fi
 QT_VERSION_TAG="BUNDLE_QT_VERSION_${OPT_COMPILER}_${OPT_VARIANT}"
 if [ "${!QT_VERSION_TAG}" != "" ]; then
   source qt_${OPT_COMPILER}_${OPT_VARIANT}_${base_build}.sh || {
-    echo "Cannot find corresponding Qt build"
-    exit 1
+  echo "Cannot find corresponding Qt build"
+  exit 1
   }
 fi
 
-# Pick up Qt paths
+# Pick up Libjpeg paths
 LIBJPEG_VERSION_TAG="BUNDLE_LIBJPEG_VERSION_${OPT_VARIANT}"
 if [ "${!LIBJPEG_VERSION_TAG}" != "" ]; then
   source libjpeg_${OPT_VARIANT}_${base_build}.sh || {
-    echo "Cannot find corresponding libjpeg-turbo build"
-    exit 1
+  echo "Cannot find corresponding libjpeg-turbo build"
+  exit 1
+  }
+fi
+
+
+# Pick up OpenCV paths
+OPENCV_VERSION_TAG="BUNDLE_OPENCV_VERSION"
+if [ "${!OPENCV_VERSION_TAG}" != "" ]; then
+  source opencv_${OPT_COMPILER}_${OPT_VARIANT}_${base_build}.sh || {
+  echo "Cannot find corresponding openCV build"
+  exit 1
   }
 fi
 
@@ -320,6 +330,9 @@ EIGEN_SUB="eigen-$BUNDLE_EIGEN_VERSION"
 GTKMM_SUB="$GTKMM_PATH"
 QT_SUB="$QT_PATH"
 LIBJPEG_SUB="$LIBJPEG_PATH"
+OPENCV_SUB="$OPENCV_PATH"
+_suffix="/install"
+OPENCV_SUB=${OPENCV_SUB%$_suffix};
 
 # Add YARP material to NSIS
 cd $YARP_DIR_UNIX || exit 1
@@ -429,11 +442,7 @@ cd $EIGEN_DIR_UNIX
 nsis_add eigen_base signature_of_eigen3_matrix_library ${EIGEN_SUB}/signature_of_eigen3_matrix_library
 nsis_add_recurse eigen_base Eigen ${EIGEN_SUB}/Eigen
 
-
-
-
 # Add GTKMM material to NSIS
-
 ## 11/11/11: Lorenzo Natale. Added missing Visual Studio dlls from ${GTKMM_SUB}/bin
 # Add GTKMM material to NSIS
 if [ "$GTKMM_DIR" != "" ]; then
@@ -510,11 +519,36 @@ fi
 # Add LIBJEPG-TURBO material to NSIS
 if [ "$LIBJPEG_DIR" != "" ]; then
   cd $LIBJPEG_DIR || exit 1
-  nsis_add_recurse libjpeg_files bin ${QT_SUB}/bin
-  nsis_add_recurse libjpeg_files bin ${QT_SUB}/classes
-  nsis_add_recurse libjpeg_files bin ${QT_SUB}/doc
-  nsis_add_recurse libjpeg_files bin ${QT_SUB}/include
-  nsis_add_recurse libjpeg_files bin ${QT_SUB}/lib
+  nsis_add_recurse libjpeg_files bin ${LIBJPEG_SUB}/bin
+  nsis_add_recurse libjpeg_files bin ${LIBJPEG_SUB}/classes
+  nsis_add_recurse libjpeg_files bin ${LIBJPEG_SUB}/doc
+  nsis_add_recurse libjpeg_files bin ${LIBJPEG_SUB}/include
+  nsis_add_recurse libjpeg_files bin ${LIBJPEG_SUB}/lib
+fi
+
+# OPENCV material to NSIS
+if [ "$OPENCV_DIR" != "" ]; then  
+  echo "Adding OPenCV material from $OPENCV_DIR"
+  cd $OPENCV_DIR || exit 1
+  nsis_add_recurse opencv_files include ${OPENCV_SUB}/include
+  nsis_add_recurse opencv_files etc/haarcascades ${OPENCV_SUB}/etc/haarcascades
+  nsis_add_recurse opencv_files etc/lbpcascades ${OPENCV_SUB}/etc/lbpcascades
+  nsis_add_recurse opencv_files etc/licenses ${OPENCV_SUB}/etc/licenses
+  nsis_add opencv_files LICENSE ${OPENCV_SUB}/LICENSE
+  nsis_add opencv_files OpenCVConfig.cmake  ${OPENCV_SUB}/OpenCVConfig.cmake
+  nsis_add opencv_files OpenCVConfig-version.cmake  ${OPENCV_SUB}/OpenCVConfig-version.cmake
+  case "$OPT_VARIANT" in
+  "x86" )
+    OPENCV_OBJ_PLAT="x86"
+    ;;
+  "x64" | "x86_64" | "x86_amd64" )
+    OPENCV_OBJ_PLAT="x64"
+    ;;
+  *)
+    echo "ERROR: platform '$OPT_VARIANT' not supported."
+  # exit 1
+  esac
+  nsis_add_recurse opencv_files $OPENCV_OBJ_PLAT ${OPENCV_SUB}/${OPENCV_OBJ_PLAT}
 fi
 
 # Add ACE material to NSIS
@@ -595,6 +629,10 @@ fi
 
 if [ "${LIBJPEG_SUB}" != "" ]; then
   NSIS_PARAMETERS="${NSIS_PARAMETERS} -DLIBJPEG_SUB=$LIBJPEG_SUB"
+fi
+
+if [ "${OPENCV_SUB}" != "" ]; then
+  NSIS_PARAMETERS="${NSIS_PARAMETERS} -DOPENCV_SUB=$OPENCV_SUB"
 fi
 
 $NSIS_BIN $NSIS_PARAMETERS "$(cygpath -m $SETTINGS_SOURCE_DIR/src/nsis/yarp_core_package.nsi)" || exit 1

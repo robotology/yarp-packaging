@@ -140,7 +140,7 @@ done
 # Here's the list of all available targets we care about
 # Removing GSL
 #full_target_list="cmake ace gsl gtkmm qt yarp nsis yarp_core_package"
-full_target_list="cmake ace eigen gtkmm qt libjpeg yarp nsis yarp_core_package"
+full_target_list="cmake ace eigen gtkmm qt libjpeg opencv yarp nsis yarp_core_package"
 
 # For package $PACKAGE, depend_$PACKAGE contains a list of packages
 # it depends on
@@ -152,10 +152,11 @@ depend_eigen=
 depend_gtkmm=
 depend_qt=
 depend_libjpeg=
+depend_opencv="cmake"
 # Removing GSL
 #depend_yarp="cmake ace gsl gtkmm qt"
 #depend_icub="cmake yarp ace gsl gtkmm"
-depend_yarp="cmake eigen ace gtkmm qt libjpeg"
+depend_yarp="cmake eigen ace gtkmm qt libjpeg opencv "
 depend_icub="cmake eigen yarp ace gtkmm"
 depend_nsis=
 depend_yarp_core_package="yarp nsis"
@@ -172,6 +173,7 @@ build_out_yarp_core_package="any"
 compilers_out_cmake="any"
 compilers_out_eigen="any"
 compilers_out_nsis="any"
+
 
 # This variable simplifies later scripts, saying that a package
 # with compilers_out_$PACKAGE set to "any" also doesn't care
@@ -266,6 +268,9 @@ for t in $full_target_list; do
   echo -e "\ttouch $t.txt\n" >> $MAKEFILE
 done
 
+echo "all: yarp_core_package.txt" >> $MAKEFILE
+echo -e "\ttouch all.txt\n" >> $MAKEFILE
+
 # Tell the user we're done, and the targets available.
 echo " "
 echo "Created: $creation_list"
@@ -273,5 +278,6 @@ echo "Here are the main targets available:"
 for t in $full_target_list; do
     echo "  make $t.txt"
 done
+echo "  make all"
 echo "For more fine-grained targets, please read the Makefile."
 echo "Delete a *.txt file if you want to rebuild the corresponding target."

@@ -28,11 +28,9 @@ fi
 LIBJPEG_PATH="libjpeg-turbo-${!LIBJPEG_VERSION_TAG}_${OPT_VARIANT}"
 LIBJPEG_FILE="${LIBJPEG_PATH}.zip"
 LIBJPEG_URL="${BUNDLE_EXT_REPO_URL}/${LIBJPEG_FILE}" 
-
-
-echo "LIBJPEG_PATH=$LIBJPEG_PATH"
-echo "LIBJPEG_FILE=$LIBJPEG_FILE"
-echo "LIBJPEG_URL=$LIBJPEG_URL"
+LIBJPEG_DIR=$(cygpath --mixed "${BUILD_DIR}/${LIBJPEG_PATH}")
+JPEG_INCLUDE_DIR=$(cygpath --mixed "${BUILD_DIR}/${LIBJPEG_PATH}/include")
+JPEG_LIBRARY=$(cygpath --mixed "${BUILD_DIR}/${LIBJPEG_PATH}/lib/jpeg.lib")
 
 if [ ! -e "$LIBJPEG_FILE" ]; then
 	wget $LIBJPEG_URL || {
@@ -49,10 +47,6 @@ if [ ! -d "$LIBJPEG_PATH" ] ; then
 fi
 
 (
-	LIBJPEG_DIR=$(cygpath --mixed "${BUILD_DIR}/${LIBJPEG_PATH}")
-  JPEG_INCLUDE_DIR=$(cygpath --mixed "${BUILD_DIR}/${LIBJPEG_PATH}/include")
-  JPEG_LIBRARY=$(cygpath --mixed "${BUILD_DIR}/${LIBJPEG_PATH}/lib/jpeg.lib")
-
 	echo "export LIBJPEG_DIR='$LIBJPEG_DIR'"
   echo "export LIBJPEG_PATH='$LIBJPEG_PATH'"
 	echo "export JPEG_INCLUDE_DIR='$JPEG_INCLUDE_DIR'"
