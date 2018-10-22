@@ -242,15 +242,7 @@ SectionGroup "opencv" SecOpencv
   SectionEnd
   Section "Set environment variables" SecOpencvEnv
     !insertmacro AddEnv1 OpenCV_DIR "$INSTDIR\${OPENCV_SUB}"
-    StrCpy $2 "x64"
-    ${If} ${YARP_PLATFORM} == "x86"
-      StrCpy $2 "x86"
-    ${EndIf}
-    StrCpy $3 "vc14"
-    ${If} ${YARP_VARIANT} == "v15"
-      StrCpy $3 "vc15"
-    ${EndIf}
-    !insertmacro AddEnv "PATH" "$INSTDIR\${OPENCV_SUB}\$2\$3\bin"
+    !insertmacro AddEnv "PATH" "$INSTDIR\${OPENCV_SUB}\bin"
   SectionEnd
 SectionGroupEnd
 !else
