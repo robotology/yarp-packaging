@@ -539,10 +539,20 @@ if [ "$OPENCV_DIR" != "" ]; then
   nsis_add opencv_files OpenCVConfig-version.cmake  ${OPENCV_SUB}/OpenCVConfig-version.cmake
   case "$OPT_VARIANT" in
   "x86" )
-    cd "x86"
+    if [ -d "x86" ]; then
+      cd "x86"
+    else
+      echo "ERROR: unable to find path $(pwd)/x86"
+      exit 1
+    fi
     ;;
   "x64" | "x86_64" | "x86_amd64" )
-    cd "x64" | exit 1
+     if [ -d "x64" ]; then
+      cd "x64"
+    else
+      echo "ERROR: unable to find path $(pwd)/x64"
+      exit 1
+    fi
     ;;
   *)
     echo "ERROR: platform '$OPT_VARIANT' not supported."
@@ -550,16 +560,32 @@ if [ "$OPENCV_DIR" != "" ]; then
     ;;
   esac
   case "$OPT_VCNNN" in
-  "VC140")
-    cd "vc14" | exit 1
+  "VC140" )
+     if [ -d "vc14" ]; then
+      cd "vc14"
+    else
+      echo "ERROR: unable to find path $(pwd)/vc14"
+      exit 1
+    fi
     ;;
   *)
     echo "ERROR: compiler version '$OPT_VCNNN' not supported."
     exit 1
     ;;
   esac
-  nsis_add_recurse opencv_files bin ${OPENCV_SUB}/bin
-  nsis_add_recurse opencv_files lib ${OPENCV_SUB}/lib
+
+  if [ -d "bin" ]; then
+    nsis_add_recurse opencv_files bin ${OPENCV_SUB}/bin
+  else 
+    echo "ERROR: unable to find path $(pwd)/bin"
+    exit 1
+  fi
+  if [ -d "lib" ]; then
+    nsis_add_recurse opencv_files lib ${OPENCV_SUB}/lib
+  else
+    echo "ERROR: unable to find path $(pwd)/lib"
+    exit 1
+  fi
 fi
 
 # Add ACE material to NSIS
