@@ -23,6 +23,8 @@ source cmake_any_any_any.sh || {
   exit 1
 }
 
+echo "$OPT_CONFIGURATION_COMMAND" 
+
 if [ "${BUNDLE_OPENCV_VERSION}" == "" ]; then
 	echo "Warning no OPENCV version defined."
 	exit 0

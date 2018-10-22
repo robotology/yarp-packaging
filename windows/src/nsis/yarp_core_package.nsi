@@ -242,30 +242,15 @@ SectionGroup "opencv" SecOpencv
   SectionEnd
   Section "Set environment variables" SecOpencvEnv
     !insertmacro AddEnv1 OpenCV_DIR "$INSTDIR\${OPENCV_SUB}"
-    ${If} ${YARP_PLATFORM} == "x64"
-    ${OrIf} ${YARP_PLATFORM} == "amd64"
-    ${OrIf} ${YARP_PLATFORM} == "x86_amd64"
-      StrCpy $0 "x64"
-    ${EndIf}
+    StrCpy $2 "x64"
     ${If} ${YARP_PLATFORM} == "x86"
-      StrCpy $0 "x86"
+      StrCpy $2 "x86"
     ${EndIf}
-    ${If} ${YARP_VARIANT} == "v10"
-      StrCpy $1 "vc10"
-    ${EndIf}
-    ${If} ${YARP_VARIANT} == "v11"
-      StrCpy $1 "vc11"
-    ${EndIf}
-    ${If} ${YARP_VARIANT} == "v12"
-      StrCpy $1 "vc12"
-    ${EndIf}
-    ${If} ${YARP_VARIANT} == "v14"
-      StrCpy $1 "vc14"
-    ${EndIf}
+    StrCpy $3 "vc14"
     ${If} ${YARP_VARIANT} == "v15"
-      StrCpy $1 "vc15"
+      StrCpy $3 "vc15"
     ${EndIf}
-    !insertmacro AddEnv "PATH" "$INSTDIR\${OPENCV_SUB}\$0\$1\bin"
+    !insertmacro AddEnv "PATH" "$INSTDIR\${OPENCV_SUB}\$2\$3\bin"
   SectionEnd
 SectionGroupEnd
 !else
@@ -361,8 +346,9 @@ SectionGroup "libjpeg-turbo" SecLibjpeg
       !include ${NSIS_OUTPUT_PATH}\libjpeg_files_add.nsi
   SectionEnd
   Section "Set environment variables" SecLibjpegEnv
+    !insertmacro AddEnv "PATH" "$INSTDIR\${LIBJPEG_SUB}\bin"
     !insertmacro AddEnv1 JPEG_INCLUDE_DIR "$INSTDIR\${LIBJPEG_SUB}\include"
-    !insertmacro AddEnv1 JPEG_LIBRARY "$INSTDIR\${LIBJPEG_SUB}\lib\libjpeg.lib"
+    !insertmacro AddEnv1 JPEG_LIBRARY "$INSTDIR\${LIBJPEG_SUB}\lib\jpeg.lib"
     SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
   SectionEnd
 SectionGroupEnd

@@ -520,10 +520,10 @@ fi
 if [ "$LIBJPEG_DIR" != "" ]; then
   cd $LIBJPEG_DIR || exit 1
   nsis_add_recurse libjpeg_files bin ${LIBJPEG_SUB}/bin
-  nsis_add_recurse libjpeg_files bin ${LIBJPEG_SUB}/classes
-  nsis_add_recurse libjpeg_files bin ${LIBJPEG_SUB}/doc
-  nsis_add_recurse libjpeg_files bin ${LIBJPEG_SUB}/include
-  nsis_add_recurse libjpeg_files bin ${LIBJPEG_SUB}/lib
+  nsis_add_recurse libjpeg_files classes ${LIBJPEG_SUB}/classes
+  nsis_add_recurse libjpeg_files doc ${LIBJPEG_SUB}/doc
+  nsis_add_recurse libjpeg_files include ${LIBJPEG_SUB}/include
+  nsis_add_recurse libjpeg_files lib ${LIBJPEG_SUB}/lib
 fi
 
 # OPENCV material to NSIS
@@ -539,16 +539,27 @@ if [ "$OPENCV_DIR" != "" ]; then
   nsis_add opencv_files OpenCVConfig-version.cmake  ${OPENCV_SUB}/OpenCVConfig-version.cmake
   case "$OPT_VARIANT" in
   "x86" )
-    OPENCV_OBJ_PLAT="x86"
+    cd "x86"
     ;;
   "x64" | "x86_64" | "x86_amd64" )
-    OPENCV_OBJ_PLAT="x64"
+    cd "x64" | exit 1
     ;;
   *)
     echo "ERROR: platform '$OPT_VARIANT' not supported."
-  # exit 1
+    exit 1
+    ;;
   esac
-  nsis_add_recurse opencv_files $OPENCV_OBJ_PLAT ${OPENCV_SUB}/${OPENCV_OBJ_PLAT}
+  case "$OPT_VCNNN" in
+  "VC140")
+    cd "vc14" | exit 1
+    ;;
+  *)
+    echo "ERROR: compiler version '$OPT_VCNNN' not supported."
+    exit 1
+    ;;
+  esac
+  nsis_add_recurse opencv_files bin ${OPENCV_SUB}/bin
+  nsis_add_recurse opencv_files lib ${OPENCV_SUB}/lib
 fi
 
 # Add ACE material to NSIS
@@ -618,7 +629,7 @@ echo " Creating NSIS installer package.."
 
 # Removing GSL
 #NSIS_PARAMETERS=" -DYARP_PLATFORM=$OPT_VARIANT -DVENDOR=$BUNDLE_VENDOR -DYARP_VERSION=$BUNDLE_YARP_VERSION -DYARP_SUB=$YARP_SUB -DGSL_VERSION=$BUNDLE_GSL_VERSION -DACE_SUB=$ACE_SUB -DGSL_SUB=$GSL_SUB -DBUILD_VERSION=${OPT_COMPILER}_${OPT_VARIANT}_${BUNDLE_TWEAK} -DYARP_LICENSE=$YARP_LICENSE -DNSIS_OUTPUT_PATH=$(cygpath -w $PWD)"
-NSIS_PARAMETERS=" -DYARP_PLATFORM=$OPT_VARIANT -DVENDOR=$BUNDLE_VENDOR -DYARP_VERSION=$BUNDLE_YARP_VERSION -DYARP_SUB=$YARP_SUB -DEIGEN_VERSION=$BUNDLE_EIGEN_VERSION -DACE_SUB=$ACE_SUB -DEIGEN_SUB=$EIGEN_SUB -DBUILD_VERSION=${OPT_COMPILER}_${OPT_VARIANT}_${BUNDLE_TWEAK} -DYARP_LICENSE=$YARP_LICENSE -DNSIS_OUTPUT_PATH=$(cygpath -w $PWD)"
+NSIS_PARAMETERS=" -DYARP_VARIANT=$OPT_COMPILER -DYARP_PLATFORM=$OPT_VARIANT -DVENDOR=$BUNDLE_VENDOR -DYARP_VERSION=$BUNDLE_YARP_VERSION -DYARP_SUB=$YARP_SUB -DEIGEN_VERSION=$BUNDLE_EIGEN_VERSION -DACE_SUB=$ACE_SUB -DEIGEN_SUB=$EIGEN_SUB -DBUILD_VERSION=${OPT_COMPILER}_${OPT_VARIANT}_${BUNDLE_TWEAK} -DYARP_LICENSE=$YARP_LICENSE -DNSIS_OUTPUT_PATH=$(cygpath -w $PWD)"
 
 if [ "$GTKMM_SUB" != "" ]; then
   NSIS_PARAMETERS="${NSIS_PARAMETERS} -DGTKMM_SUB=$GTKMM_SUB"
