@@ -69,9 +69,14 @@ fi
 
 # Helper for running a command within the build chroot
 function run_in_chroot {
-    echo "Running [$2]"
+    CUR_DIR=$(pwd)
+    echo "We are in [$CUR_DIR]" 
+    echo "Running [$2] in [$1]"
     sudo chroot $1 bash -c "$2"
 }
+
+run_in_chroot build_chroot "apt-get -y install --install-recommends locales"
+run_in_chroot build_chroot "/usr/sbin/locale-gen en_US en_US.UTF-8"
 
 DEPENDENCIES_DISTRIB="DEPENDENCIES_${PLATFORM_KEY}"
 BACKPORTS_URL_DISTRIB="BACKPORTS_URL_${PLATFORM_KEY}"

@@ -48,7 +48,7 @@ source ./config_$platform.sh || {
 }
 
 # If Ubuntu-flavored, make sure to include Universe (to get ACE)
-if [ "k$PLATFORM_IS_UBUNTU" = "ktrue" ]; then
+if [ "$PLATFORM_IS_UBUNTU" == "true" ]; then
     PLATFORM_COMPONENTS="--components=main,universe"
 fi
 

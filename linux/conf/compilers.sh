@@ -1,6 +1,6 @@
-PLATFORMS="bionic xenial"
+PLATFORMS="bionic xenial stretch"
 
-stretch_MIRROR="http://deb.debian.org/debian/"
+stretch_MIRROR="http://httpredir.debian.org/debian"
 bionic_MIRROR="http://it.archive.ubuntu.com/ubuntu/"
 xenial_MIRROR="http://it.archive.ubuntu.com/ubuntu/"
 

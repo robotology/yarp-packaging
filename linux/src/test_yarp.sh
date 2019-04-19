@@ -63,7 +63,9 @@ source yarp_${platform}.sh || {
 
 # Helper for running a command within the test chroot
 function run_in_chroot {
-    echo "Running [$2]"
+    CUR_DIR=$(pwd)
+    echo "We are in [$CUR_DIR]"
+    echo "Running [$2] in [$1]"
     sudo chroot $1 bash -c "$2"
 }
 
