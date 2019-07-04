@@ -3,9 +3,9 @@
 DEPENDENCIES_COMMON="qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev libqt5svg5 libtinyxml-dev libace-dev subversion cmake dpkg wget libeigen3-dev qml-module-qtquick2 qml-module-qtquick-window2 qml-module-qtmultimedia qml-module-qtquick-dialogs qml-module-qtquick-controls libjpeg-dev libopencv-dev"
 # Leave empty if you don't use dependancies from backports otherwise fill the following with the line that add backports in the distro sources.list (platform dependant)
 DEPENDENCIES_stretch=""
-DEPENDENCIES_artful=""
 DEPENDENCIES_bionic=""
-DEPENDENCIES_xenial=""
+DEPENDENCIES_cosmic="libopenmpi-dev"
+DEPENDENCIES_disco=""
 
 #BACKPORTS_URL_wheezy="http://http.debian.net/debian"
 export YARP_PACKAGE_VERSION=3.1.0

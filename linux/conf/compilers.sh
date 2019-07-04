@@ -1,8 +1,11 @@
-PLATFORMS="bionic xenial stretch"
+#PLATFORMS="bionic cosmic disco stretch"
+PLATFORMS="bionic cosmic disco buster"
 
+buster_MIRROR="http://httpredir.debian.org/debian"
 stretch_MIRROR="http://httpredir.debian.org/debian"
-bionic_MIRROR="http://it.archive.ubuntu.com/ubuntu/"
-xenial_MIRROR="http://it.archive.ubuntu.com/ubuntu/"
+bionic_MIRROR="http://it.archive.ubuntu.com/ubuntu"
+cosmic_MIRROR="http://it.archive.ubuntu.com/ubuntu"
+disco_MIRROR="http://it.archive.ubuntu.com/ubuntu/"
 
 HARDWARE="i386 amd64"
 
