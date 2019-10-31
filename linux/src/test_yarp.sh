@@ -75,7 +75,7 @@ test -e $YARP_PACKAGE || exit 1
 
 # Create a chroot for testing, if one does not already exist
 if [ ! -e test_chroot ]; then
-    sudo cp -R $CHROOT_DIR test_chroot || exit 1
+    sudo cp -a $CHROOT_DIR test_chroot || exit 1
 fi
 
 # Reset the chroot (this is for quick tests only; more reliable method
