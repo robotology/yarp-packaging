@@ -85,6 +85,8 @@ if [ "${!BACKPORTS_URL_DISTRIB}" != "" ]; then
 fi
 
 # Install basic dependencies
+# Set DEBIAN_FRONTEND=noninteractive to avoid manually configure tzdata 
+# See https://askubuntu.com/questions/909277/avoiding-user-interaction-with-tzdata-when-installing-certbot-in-a-docker-contai
 if [ "$DEPENDENCIES_COMMON" != "" ]; then
   run_in_chroot build_chroot "apt-get -y install $DEPENDENCIES_COMMON" || exit 1
 fi
@@ -110,18 +112,16 @@ run_in_chroot build_chroot "rm -rf $CHROOT_BUILD" || exit 1
 run_in_chroot build_chroot "mkdir -p $CHROOT_BUILD" || exit 1
 CMAKE=cmake
 
-## Fetch cmake if version in repository is too old
-#if [ -e build_chroot/$CHROOT_BUILD/local_cmake ]; then
-#    CMAKE=`cd build_chroot/$CHROOT_BUILD/; echo cmake-*/bin/cmake`
-#else
-#    run_in_chroot build_chroot "cd $CHROOT_BUILD && cmake --version | grep ' 2\.[46]' && ( wget http://www.cmake.org/files/v2.8/cmake-2.8.12.1-Linux-i386.tar.gz && tar xzvf cmake-2.8.12.1-Linux-i386.tar.gz && touch local_cmake )"
-#fi
-#
-## If we downloaded cmake, we need to make sure we have 32-bit libraries
-#if [ -e build_chroot/$CHROOT_BUILD/local_cmake ]; then
-#    run_in_chroot build_chroot "yes | apt-get install ia32-libs"
-#    CMAKE=$CHROOT_BUILD/`cd build_chroot/$CHROOT_BUILD/; echo cmake-*/bin/cmake`
-#fi
+# Fetch cmake as version in repository is too old
+if [ -e build_chroot/$CHROOT_BUILD/local_cmake ]; then
+    CMAKE=`cd build_chroot/$CHROOT_BUILD/; echo cmake-*/bin/cmake`
+else
+    run_in_chroot build_chroot "cd $CHROOT_BUILD && ( wget https://cmake.org/files/v3.12/cmake-3.12.0-Linux-x86_64.tar.gz && tar xzvf cmake-3.12.0-Linux-x86_64.tar.gz && touch local_cmake )"
+fi
+
+if [ -e build_chroot/$CHROOT_BUILD/local_cmake ]; then
+    CMAKE=$CHROOT_BUILD/`cd build_chroot/$CHROOT_BUILD/; echo cmake-*/bin/cmake`
+fi
 
 # Go ahead and configure
 run_in_chroot build_chroot "mkdir -p $CHROOT_BUILD && cd $CHROOT_BUILD && $CMAKE $YARP_CMAKE_OPTIONS $CHROOT_SRC" || exit 1
