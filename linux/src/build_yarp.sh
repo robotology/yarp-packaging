@@ -73,8 +73,8 @@ function run_in_chroot {
     sudo chroot $1 bash -c "$2"
 }
 
-run_in_chroot build_chroot "apt-get -y install --install-recommends locales apt-utils"
-run_in_chroot build_chroot "/usr/sbin/locale-gen en_US en_US.UTF-8"
+run_in_chroot build_chroot "DEBIAN_FRONTEND=noninteractive; apt-get -y install --install-recommends locales apt-utils"
+run_in_chroot build_chroot "DEBIAN_FRONTEND=noninteractive; /usr/sbin/locale-gen en_US en_US.UTF-8"
 
 DEPENDENCIES_DISTRIB="DEPENDENCIES_${PLATFORM_KEY}"
 BACKPORTS_URL_DISTRIB="BACKPORTS_URL_${PLATFORM_KEY}"
@@ -85,8 +85,6 @@ if [ "${!BACKPORTS_URL_DISTRIB}" != "" ]; then
 fi
 
 # Install basic dependencies
-# Set DEBIAN_FRONTEND=noninteractive to avoid manually configure tzdata 
-# See https://askubuntu.com/questions/909277/avoiding-user-interaction-with-tzdata-when-installing-certbot-in-a-docker-contai
 if [ "$DEPENDENCIES_COMMON" != "" ]; then
   run_in_chroot build_chroot "apt-get -y install $DEPENDENCIES_COMMON" || exit 1
 fi
