@@ -1,4 +1,4 @@
-PLATFORMS="bionic disco eoan stretch buster"
+PLATFORMS="bionic buster"
 
 buster_MIRROR="http://deb.debian.org/debian"
 stretch_MIRROR="http://deb.debian.org/debian"
@@ -11,7 +11,6 @@ HARDWARE="amd64"
 
 # exceptions can be added as follows
 # SKIP_lenny_amd64=1
-SKIP_eoan_amd64=1
 
 # creates test chroots and test yarp package (required to build icub packages)
 TEST_PACKAGES="true"
