@@ -81,8 +81,25 @@ fi
 # Reset the chroot (this is for quick tests only; more reliable method
 # is to delete and start over)
 sudo cp yarp-*.deb test_chroot/tmp || exit 1
-run_in_chroot test_chroot "apt-get -y install gnupg" 
-run_in_chroot test_chroot "apt-get -y remove yarp" 
+run_in_chroot test_chroot "DEBIAN_FRONTEND=noninteractive; apt-get -y install gnupg" 
+run_in_chroot test_chroot "DEBIAN_FRONTEND=noninteractive; apt-get -y remove yarp" 
+run_in_chroot test_chroot "DEBIAN_FRONTEND=noninteractive; apt-get -y install software-properties-common" 
+run_in_chroot test_chroot "DEBIAN_FRONTEND=noninteractive; apt-get -y install wget" 
+
+case "$PLATFORM_KEY" in
+    "bionic")
+      run_in_chroot test_chroot "wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | apt-key add -"
+      run_in_chroot test_chroot "apt-add-repository 'deb https://apt.kitware.com/ubuntu/ $PLATFORM_KEY main'"
+      run_in_chroot test_chroot "DEBIAN_FRONTEND=noninteractive; apt-get -y install cmake " 
+      ;;
+    "buster")
+      run_in_chroot test_chroot "DEBIAN_FRONTEND=noninteractive; apt-get -y -t buster-backports install cmake" 
+      ;;
+    *)
+      echo "ERROR: unsupported distro $PLATFORM_KEY"
+      exit 1
+      ;;
+  esac 
 
 DEPENDENCIES_DISTRIB="DEPENDENCIES_${PLATFORM_KEY}"
 BACKPORTS_URL_DISTRIB="BACKPORTS_URL_${PLATFORM_KEY}"
@@ -93,7 +110,7 @@ if [ "${!BACKPORTS_URL_DISTRIB}" != "" ]; then
 fi
 
 # Install tool to load .deb and its dependencies.  Not available on etch
-run_in_chroot test_chroot "apt-get -y install gdebi-core" || {
+run_in_chroot test_chroot "DEBIAN_FRONTEND=noninteractive; apt-get -y install gdebi-core" || {
     echo "=============================================================="
     echo "= gdebi-core not available"
     echo "= you will need to test by hand for this platform, as follows:"
@@ -106,7 +123,7 @@ run_in_chroot test_chroot "apt-get -y install gdebi-core" || {
 
 # _AC_
 
-run_in_chroot test_chroot "apt-get install gdebi-core" || exit 1
+run_in_chroot test_chroot "DEBIAN_FRONTEND=noninteractive; apt-get install gdebi-core" || exit 1
 run_in_chroot test_chroot "gdebi -n /tmp/$YARP_PACKAGE" || exit 1
 
 echo "To enter test chroot, run: ($YARP_PACKAGE)"
