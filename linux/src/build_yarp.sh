@@ -86,11 +86,11 @@ fi
 
 # Install basic dependencies
 if [ "$DEPENDENCIES_COMMON" != "" ]; then
-  run_in_chroot build_chroot "apt-get -y install $DEPENDENCIES_COMMON" || exit 1
+  run_in_chroot build_chroot "DEBIAN_FRONTEND=noninteractive; apt-get -y install $DEPENDENCIES_COMMON" || exit 1
 fi
 
 if [ "${!DEPENDENCIES_DISTRIB}" != "" ]; then
-  run_in_chroot build_chroot "apt-get -y install ${!DEPENDENCIES_DISTRIB}" || exit 1
+  run_in_chroot build_chroot "DEBIAN_FRONTEND=noninteractive; apt-get -y install ${!DEPENDENCIES_DISTRIB}" || exit 1
 fi
 
 if [ "$YARP_PACKAGE_VERSION" == "" ]; then
@@ -130,6 +130,7 @@ run_in_chroot build_chroot "cd $CHROOT_BUILD && make" || exit 1
 # Go ahead and generate .deb
 #PACKAGE_DEPENDENCIES="libace-dev (>= 5.6), libgsl0-dev (>= 1.11), libgtkmm-2.4-dev (>= 2.14.1)"
 PACKAGE_DEPENDENCIES=$( echo "$DEPENDENCIES_COMMON ${!DEPENDENCIES_DISTRIB}" | sed -e "s/ /,/g" | sed -e "s/,$//g") 
+PACKAGE_DEPENDENCIES="$PACKAGE_DEPENDENCIES, cmake (>=${CMAKE_MIN_REQ_VER})"
 DEBIAN_PACKAGE_VERSION="${YARP_PACKAGE_VERSION}-${YARP_DEB_REVISION}~${PLATFORM_KEY}"  
 
 run_in_chroot build_chroot "cd $CHROOT_BUILD && $CMAKE -DCPACK_GENERATOR='DEB' -DCPACK_DEBIAN_PACKAGE_VERSION=${DEBIAN_PACKAGE_VERSION} -DCPACK_PACKAGE_CONTACT='info@icub.org' -DCPACK_DEBIAN_PACKAGE_MAINTAINER='matteo.brunettini@iit.it' -DCPACK_DEBIAN_PACKAGE_DEPENDS:STRING='$PACKAGE_DEPENDENCIES' ." || exit 1
