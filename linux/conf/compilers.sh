@@ -1,10 +1,8 @@
-PLATFORMS="bionic buster"
+PLATFORMS="bionic buster focal"
 
 buster_MIRROR="http://deb.debian.org/debian"
-#stretch_MIRROR="http://deb.debian.org/debian"
 bionic_MIRROR="http://it.archive.ubuntu.com/ubuntu"
-#disco_MIRROR="http://it.archive.ubuntu.com/ubuntu/"
-#eoan_MIRROR="http://it.archive.ubuntu.com/ubuntu/"
+focal_MIRROR="http://it.archive.ubuntu.com/ubuntu"
 
 HARDWARE="amd64"
 

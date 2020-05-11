@@ -4,6 +4,7 @@ DEPENDENCIES_COMMON="qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev libqt5svg5
 # Leave empty if you don't use dependancies from backports otherwise fill the following with the line that add backports in the distro sources.list (platform dependant)
 DEPENDENCIES_buster=""
 DEPENDENCIES_bionic=""
+DEPENDENCIES_focal=""
 #BACKPORTS_URL_wheezy="http://http.debian.net/debian"
 CMAKE_MIN_REQ_VER="3.12.0"
 export YARP_PACKAGE_VERSION=3.3.2

@@ -95,6 +95,9 @@ case "$PLATFORM_KEY" in
     "buster")
       run_in_chroot test_chroot "DEBIAN_FRONTEND=noninteractive; apt-get -y -t buster-backports install cmake" 
       ;;
+    "focal")
+      run_in_chroot test_chroot "DEBIAN_FRONTEND=noninteractive; apt-get -y install cmake "
+      ;;
     *)
       echo "ERROR: unsupported distro $PLATFORM_KEY"
       exit 1
