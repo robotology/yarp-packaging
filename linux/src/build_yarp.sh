@@ -121,11 +121,25 @@ if [ -e build_chroot/$CHROOT_BUILD/local_cmake ]; then
     CMAKE=$CHROOT_BUILD/`cd build_chroot/$CHROOT_BUILD/; echo cmake-*/bin/cmake`
 fi
 
+###------------------- Handle YCM ----------------------###
+# if [ ! -e build_chroot/$CHROOT_BUILD/tmp/ycm-deb.done ]; then
+  echo "Installing YCM package"
+  YCM_URL_TAG="YCM_PACKAGE_URL_${PLATFORM_KEY}"
+  run_in_chroot build_chroot "wget ${!YCM_URL_TAG} -O /tmp/ycm.deb"
+  run_in_chroot build_chroot "DEBIAN_FRONTEND=noninteractive; dpkg -i /tmp/ycm.deb; apt-get install -f; dpkg -i /tmp/ycm.deb && touch /tmp/ycm-deb.done"
+  if [ ! -e build_chroot/$CHROOT_BUILD/tmp/ycm-deb.done ]; then
+    echo "ERROR: problem installing YCM"
+    do_exit 1
+  fi
+# else
+#  echo "YCM package already handled."
+#fi
+
 # Go ahead and configure
 run_in_chroot build_chroot "mkdir -p $CHROOT_BUILD && cd $CHROOT_BUILD && $CMAKE $YARP_CMAKE_OPTIONS $CHROOT_SRC" || exit 1
 
 # Go ahead and make
-run_in_chroot build_chroot "cd $CHROOT_BUILD && make" || exit 1
+run_in_chroot build_chroot "cd $CHROOT_BUILD && make -j" || exit 1
 
 # Go ahead and generate .deb
 #PACKAGE_DEPENDENCIES="libace-dev (>= 5.6), libgsl0-dev (>= 1.11), libgtkmm-2.4-dev (>= 2.14.1)"
@@ -147,7 +161,7 @@ run_in_chroot build_chroot "cd $CHROOT_BUILD && cp -a _CPack_Packages/Linux/DEB/
 run_in_chroot build_chroot "cd $CHROOT_BUILD && cp -a _CPack_Packages/Linux/DEB/yarp_*_/md5sums $PACK/DEBIAN" || exit 1
 run_in_chroot build_chroot "cd $CHROOT_BUILD && cp -a _CPack_Packages/Linux/DEB/yarp_*_/usr $PACK/usr" || exit 1
 run_in_chroot build_chroot "cd $CHROOT_BUILD && mkdir -p $PACK/etc/bash_completion.d" || exit 1
-run_in_chroot build_chroot "cd $CHROOT_BUILD && cp -a ${CHROOT_SRC}/scripts/yarp_completion $PACK/etc/bash_completion.d/yarp" || exit 1
+run_in_chroot build_chroot "cd $CHROOT_BUILD && cp -a ${CHROOT_SRC}/data/bash-completion/yarp $PACK/etc/bash_completion.d/yarp" || exit 1
 run_in_chroot build_chroot "cd $CHROOT_BUILD && chmod 644 $PACK/etc/bash_completion.d/yarp" || exit 1
 run_in_chroot build_chroot "cd $CHROOT_BUILD && dpkg -b $PACK $YARP_PACKAGE_NAME" || exit 1
 
