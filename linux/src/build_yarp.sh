@@ -84,6 +84,31 @@ if [ "${!BACKPORTS_URL_DISTRIB}" != "" ]; then
   run_in_chroot build_chroot "apt-get update"
 fi
 
+# -------------------- Handle CMAKE --------------------###
+if [ ! -e "build_chroot/$CHROOT_BUILD/tmp/cmake.done" ]; then
+#if [ -e build_chroot/$CHROOT_BUILD/local_cmake ]; then
+#  CMAKE=`cd build_chroot/$CHROOT_BUILD/; echo cmake-*/bin/cmake`
+#else
+  #run_in_chroot build_chroot "cd $CHROOT_BUILD && ( wget https://cmake.org/files/v3.12/cmake-3.12.0-Linux-x86_64.tar.gz && tar xzvf cmake-3.12.0-Linux-x86_64.tar.gz && touch local_cmake )"
+  if [ "$PLATFORM_KEY" == "bionic" ]; then
+    run_in_chroot build_chroot "DEBIAN_FRONTEND=noninteractive; apt-get -y install software-properties-common apt-transport-https ca-certificates gnupg wget"
+    run_in_chroot build_chroot "wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null"
+    run_in_chroot build_chroot "apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main'"
+  fi
+  run_in_chroot build_chroot "apt-get -y update"
+  run_in_chroot build_chroot "DEBIAN_FRONTEND=noninteractive; apt-get -y install cmake && touch /tmp/cmake.done"
+  if [ ! -e "build_chroot/$CHROOT_BUILD/tmp/cmake.done" ]; then
+    echo "ERROR: problem installing cmake"
+    exit 1
+  fi
+fi
+
+#if [ -e build_chroot/$CHROOT_BUILD/local_cmake ]; then
+#  CMAKE=$CHROOT_BUILD/`cd build_chroot/$CHROOT_BUILD/; echo cmake-*/bin/cmake`
+#fi
+
+
+# -------------------- Handle deps --------------------###
 # Install basic dependencies
 if [ "$DEPENDENCIES_COMMON" != "" ]; then
   run_in_chroot build_chroot "DEBIAN_FRONTEND=noninteractive; apt-get -y install $DEPENDENCIES_COMMON" || exit 1
@@ -97,6 +122,22 @@ if [ "$YARP_PACKAGE_VERSION" == "" ]; then
   echo "YARP_PACKAGE_VERSION not defined"
   exit 1
 fi
+
+###------------------- Handle YCM ----------------------###
+if [ ! -e build_chroot/$CHROOT_BUILD/tmp/ycm-deb.done ]; then
+  echo "Installing YCM package"
+  YCM_URL_TAG="YCM_PACKAGE_URL_${PLATFORM_KEY}"
+  run_in_chroot build_chroot "wget ${!YCM_URL_TAG} -O /tmp/ycm.deb"
+  run_in_chroot build_chroot "DEBIAN_FRONTEND=noninteractive; dpkg -i /tmp/ycm.deb; apt-get install -f"
+  run_in_chroot build_chroot "DEBIAN_FRONTEND=noninteractive; dpkg -i /tmp/ycm.deb && touch /tmp/ycm-deb.done"
+  if [ ! -e build_chroot/$CHROOT_BUILD/tmp/ycm-deb.done ]; then
+    echo "ERROR: problem installing YCM"
+    exit 1
+  fi
+else
+  echo "YCM package already handled."
+fi
+
 echo "yarp tag $YARP_PACKAGE_VERSION"
 CHROOT_SRC="/tmp/yarp-$YARP_PACKAGE_VERSION"
 CHROOT_BUILD="/tmp/yarp-$YARP_PACKAGE_VERSION/build"
@@ -110,22 +151,11 @@ run_in_chroot build_chroot "rm -rf $CHROOT_BUILD" || exit 1
 run_in_chroot build_chroot "mkdir -p $CHROOT_BUILD" || exit 1
 CMAKE=cmake
 
-# Fetch cmake as version in repository is too old
-if [ -e build_chroot/$CHROOT_BUILD/local_cmake ]; then
-    CMAKE=`cd build_chroot/$CHROOT_BUILD/; echo cmake-*/bin/cmake`
-else
-    run_in_chroot build_chroot "cd $CHROOT_BUILD && ( wget https://cmake.org/files/v3.12/cmake-3.12.0-Linux-x86_64.tar.gz && tar xzvf cmake-3.12.0-Linux-x86_64.tar.gz && touch local_cmake )"
-fi
-
-if [ -e build_chroot/$CHROOT_BUILD/local_cmake ]; then
-    CMAKE=$CHROOT_BUILD/`cd build_chroot/$CHROOT_BUILD/; echo cmake-*/bin/cmake`
-fi
-
 # Go ahead and configure
 run_in_chroot build_chroot "mkdir -p $CHROOT_BUILD && cd $CHROOT_BUILD && $CMAKE $YARP_CMAKE_OPTIONS $CHROOT_SRC" || exit 1
 
 # Go ahead and make
-run_in_chroot build_chroot "cd $CHROOT_BUILD && make" || exit 1
+run_in_chroot build_chroot "cd $CHROOT_BUILD && make -j" || exit 1
 
 # Go ahead and generate .deb
 #PACKAGE_DEPENDENCIES="libace-dev (>= 5.6), libgsl0-dev (>= 1.11), libgtkmm-2.4-dev (>= 2.14.1)"
@@ -147,7 +177,7 @@ run_in_chroot build_chroot "cd $CHROOT_BUILD && cp -a _CPack_Packages/Linux/DEB/
 run_in_chroot build_chroot "cd $CHROOT_BUILD && cp -a _CPack_Packages/Linux/DEB/yarp_*_/md5sums $PACK/DEBIAN" || exit 1
 run_in_chroot build_chroot "cd $CHROOT_BUILD && cp -a _CPack_Packages/Linux/DEB/yarp_*_/usr $PACK/usr" || exit 1
 run_in_chroot build_chroot "cd $CHROOT_BUILD && mkdir -p $PACK/etc/bash_completion.d" || exit 1
-run_in_chroot build_chroot "cd $CHROOT_BUILD && cp -a ${CHROOT_SRC}/scripts/yarp_completion $PACK/etc/bash_completion.d/yarp" || exit 1
+run_in_chroot build_chroot "cd $CHROOT_BUILD && cp -a ${CHROOT_SRC}/data/bash-completion/yarp $PACK/etc/bash_completion.d/yarp" || exit 1
 run_in_chroot build_chroot "cd $CHROOT_BUILD && chmod 644 $PACK/etc/bash_completion.d/yarp" || exit 1
 run_in_chroot build_chroot "cd $CHROOT_BUILD && dpkg -b $PACK $YARP_PACKAGE_NAME" || exit 1
 
