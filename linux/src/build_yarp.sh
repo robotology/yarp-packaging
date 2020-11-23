@@ -158,8 +158,8 @@ run_in_chroot build_chroot "mkdir -p $CHROOT_BUILD && cd $CHROOT_BUILD && $CMAKE
 run_in_chroot build_chroot "cd $CHROOT_BUILD && make -j" || exit 1
 
 # Go ahead and generate .deb
-#PACKAGE_DEPENDENCIES="libace-dev (>= 5.6), libgsl0-dev (>= 1.11), libgtkmm-2.4-dev (>= 2.14.1)"
-PACKAGE_DEPENDENCIES=$( echo "$DEPENDENCIES_COMMON ${!DEPENDENCIES_DISTRIB}" | sed -e "s/ /,/g" | sed -e "s/,$//g") 
+PACKAGE_DEPENDENCIES="libace-dev (>= 5.6), libgsl-dev (>= 1.11), libgtkmm-2.4-dev (>= 2.14.1)"
+#PACKAGE_DEPENDENCIES=$( echo "$DEPENDENCIES_COMMON ${!DEPENDENCIES_DISTRIB}" | sed -e "s/ /,/g" | sed -e "s/,$//g") 
 PACKAGE_DEPENDENCIES="$PACKAGE_DEPENDENCIES, cmake (>=${CMAKE_MIN_REQ_VER})"
 DEBIAN_PACKAGE_VERSION="${YARP_PACKAGE_VERSION}-${YARP_DEB_REVISION}~${PLATFORM_KEY}"  
 
