@@ -8,7 +8,7 @@
 #
 # Compile YARP within a chroot.
 #
-# Command line arguments: 
+# Command line arguments:
 #   build_yarp.sh ${OPT_PLATFORM} ${OPT_CHROOT_DIRECTORY}
 # Example:
 #   build_yarp.sh etch chroot_etch
@@ -68,7 +68,7 @@ sudo cp -a $CHROOT_DIR build_chroot || exit 1
 # Helper for running a command within the build chroot
 function run_in_chroot {
     CUR_DIR=$(pwd)
-    echo "We are in [$CUR_DIR]" 
+    echo "We are in [$CUR_DIR]"
     echo "Running [$2] in [$1]"
     sudo chroot $1 bash -c "$2"
 }
@@ -86,26 +86,22 @@ fi
 
 # -------------------- Handle CMAKE --------------------###
 if [ ! -e "build_chroot/$CHROOT_BUILD/tmp/cmake.done" ]; then
-#if [ -e build_chroot/$CHROOT_BUILD/local_cmake ]; then
-#  CMAKE=`cd build_chroot/$CHROOT_BUILD/; echo cmake-*/bin/cmake`
-#else
-  #run_in_chroot build_chroot "cd $CHROOT_BUILD && ( wget https://cmake.org/files/v3.12/cmake-3.12.0-Linux-x86_64.tar.gz && tar xzvf cmake-3.12.0-Linux-x86_64.tar.gz && touch local_cmake )"
   if [ "$PLATFORM_KEY" == "bionic" ]; then
     run_in_chroot build_chroot "DEBIAN_FRONTEND=noninteractive; apt-get -y install software-properties-common apt-transport-https ca-certificates gnupg wget"
     run_in_chroot build_chroot "wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null"
-    run_in_chroot build_chroot "apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main'"
+    run_in_chroot build_chroot "apt-add-repository 'deb https://apt.kitware.com/ubuntu/ $PLATFORM_KEY main'"
+  elif [ "$PLATFORM_KEY" == "buster" ]; then
+    run_in_chroot build_chroot "apt-add-repository 'deb http://deb.debian.org/debian buster-backports main'"
+    run_in_chroot build_chroot "DEBIAN_FRONTEND=noninteractive; apt-get -y update && apt-get -y install -t buster-backports cmake && touch /tmp/cmake.done"
+  else
+      run_in_chroot build_chroot "apt-get -y update"
+      run_in_chroot build_chroot "DEBIAN_FRONTEND=noninteractive; apt-get -y install cmake && touch /tmp/cmake.done"
   fi
-  run_in_chroot build_chroot "apt-get -y update"
-  run_in_chroot build_chroot "DEBIAN_FRONTEND=noninteractive; apt-get -y install cmake && touch /tmp/cmake.done"
   if [ ! -e "build_chroot/$CHROOT_BUILD/tmp/cmake.done" ]; then
     echo "ERROR: problem installing cmake"
     exit 1
   fi
 fi
-
-#if [ -e build_chroot/$CHROOT_BUILD/local_cmake ]; then
-#  CMAKE=$CHROOT_BUILD/`cd build_chroot/$CHROOT_BUILD/; echo cmake-*/bin/cmake`
-#fi
 
 
 # -------------------- Handle deps --------------------###
@@ -159,9 +155,9 @@ run_in_chroot build_chroot "cd $CHROOT_BUILD && make -j" || exit 1
 
 # Go ahead and generate .deb
 PACKAGE_DEPENDENCIES="libace-dev (>= 5.6), libgsl-dev (>= 1.11), libgtkmm-2.4-dev (>= 2.14.1)"
-#PACKAGE_DEPENDENCIES=$( echo "$DEPENDENCIES_COMMON ${!DEPENDENCIES_DISTRIB}" | sed -e "s/ /,/g" | sed -e "s/,$//g") 
+#PACKAGE_DEPENDENCIES=$( echo "$DEPENDENCIES_COMMON ${!DEPENDENCIES_DISTRIB}" | sed -e "s/ /,/g" | sed -e "s/,$//g")
 PACKAGE_DEPENDENCIES="$PACKAGE_DEPENDENCIES, cmake (>=${CMAKE_MIN_REQ_VER})"
-DEBIAN_PACKAGE_VERSION="${YARP_PACKAGE_VERSION}-${YARP_DEB_REVISION}~${PLATFORM_KEY}"  
+DEBIAN_PACKAGE_VERSION="${YARP_PACKAGE_VERSION}-${YARP_DEB_REVISION}~${PLATFORM_KEY}"
 
 run_in_chroot build_chroot "cd $CHROOT_BUILD && $CMAKE -DCPACK_GENERATOR='DEB' -DCPACK_DEBIAN_PACKAGE_VERSION=${DEBIAN_PACKAGE_VERSION} -DCPACK_PACKAGE_CONTACT='info@icub.org' -DCPACK_DEBIAN_PACKAGE_MAINTAINER='matteo.brunettini@iit.it' -DCPACK_DEBIAN_PACKAGE_DEPENDS:STRING='$PACKAGE_DEPENDENCIES' ." || exit 1
 run_in_chroot build_chroot "cd $CHROOT_BUILD && rm -f *.deb && make package" || exit 1
