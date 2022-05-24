@@ -2,14 +2,10 @@
 
 ###------------------- Handle YCM ----------------------###
 YCM_PACKAGE="ycm-cmake-modules"
-YCM_REQUIRED_VERSION="0.14.0"
-YCM_PACKAGE_URL_focal="https://github.com/robotology/ycm/releases/download/v${YCM_REQUIRED_VERSION}/${YCM_PACKAGE}_${YCM_REQUIRED_VERSION}-1.ubuntu20.04.robotology1_all.deb"
-YCM_PACKAGE_URL_jammy="https://github.com/robotology/ycm/releases/download/v${YCM_REQUIRED_VERSION}/${YCM_PACKAGE}_${YCM_REQUIRED_VERSION}-1.ubuntu22.04.robotology1_all.deb"
-# issues with libjs-sphinxdoc
-YCM_PACKAGE_URL_buster="https://github.com/robotology/ycm/releases/download/v${YCM_REQUIRED_VERSION}/${YCM_PACKAGE}_${YCM_REQUIRED_VERSION}-1.debian10.robotology1_all.deb"
+YCM_REQUIRED_VERSION="0.14.1"
+YCM_PACKAGE_URL="https://github.com/robotology/ycm/releases/download/v${YCM_REQUIRED_VERSION}/${YCM_PACKAGE}-${YCM_REQUIRED_VERSION}-all.deb"
 
-# TODO REMOVE unzip!
-DEPENDENCIES_COMMON="unzip libjs-sphinxdoc libjs-underscore qml-module-qt-labs-settings libqcustomplot-dev qml-module-qt-labs-folderlistmodel qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev libqt5svg5 libtinyxml-dev libace-dev git dpkg wget libeigen3-dev qml-module-qtquick2 qml-module-qtquick-window2 qml-module-qtmultimedia qml-module-qtquick-dialogs qml-module-qtquick-controls qml-module-qt-labs-folderlistmodel qml-module-qt-labs-settings libjpeg-dev libopencv-dev libopenni2-dev portaudio19-dev libsdl1.2-dev libi2c-dev libv4l-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-libav gstreamer1.0-tools libgraphviz-dev libsqlite3-dev libqcustomplot-dev"
+DEPENDENCIES_COMMON="libjs-sphinxdoc libjs-underscore qml-module-qt-labs-settings libqcustomplot-dev qml-module-qt-labs-folderlistmodel qtbase5-dev qtdeclarative5-dev qtmultimedia5-dev libqt5svg5 libtinyxml-dev libace-dev git dpkg wget libeigen3-dev qml-module-qtquick2 qml-module-qtquick-window2 qml-module-qtmultimedia qml-module-qtquick-dialogs qml-module-qtquick-controls qml-module-qt-labs-folderlistmodel qml-module-qt-labs-settings libjpeg-dev libopencv-dev libopenni2-dev portaudio19-dev libsdl1.2-dev libi2c-dev libv4l-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-libav gstreamer1.0-tools libgraphviz-dev libsqlite3-dev libqcustomplot-dev"
 # Leave empty if you don't use dependancies from backports otherwise fill the following with the line that add backports in the distro sources.list (platform dependant)
 DEPENDENCIES_buster=""
 DEPENDENCIES_jammy=""
