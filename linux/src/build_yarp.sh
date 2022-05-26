@@ -86,12 +86,8 @@ fi
 
 # -------------------- Handle CMAKE --------------------###
 if [ ! -e "build_chroot/$CHROOT_BUILD/tmp/cmake.done" ]; then
-  if [ "$PLATFORM_KEY" == "bionic" ]; then
-    run_in_chroot build_chroot "DEBIAN_FRONTEND=noninteractive; apt-get -y install software-properties-common apt-transport-https ca-certificates gnupg wget"
-    run_in_chroot build_chroot "wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null"
-    run_in_chroot build_chroot "apt-add-repository 'deb https://apt.kitware.com/ubuntu/ $PLATFORM_KEY main'"
-  elif [ "$PLATFORM_KEY" == "buster" ]; then
-    run_in_chroot build_chroot "apt-add-repository 'deb http://deb.debian.org/debian buster-backports main'"
+  if [ "$PLATFORM_KEY" == "buster" ]; then
+    run_in_chroot build_chroot "DEBIAN_FRONTEND=noninteractive; apt-get -y install software-properties-common && apt-add-repository 'deb http://deb.debian.org/debian buster-backports main'"
     run_in_chroot build_chroot "DEBIAN_FRONTEND=noninteractive; apt-get -y update && apt-get -y install -t buster-backports cmake && touch /tmp/cmake.done"
   else
       run_in_chroot build_chroot "apt-get -y update"
@@ -122,8 +118,7 @@ fi
 ###------------------- Handle YCM ----------------------###
 if [ ! -e build_chroot/$CHROOT_BUILD/tmp/ycm-deb.done ]; then
   echo "Installing YCM package"
-  YCM_URL_TAG="YCM_PACKAGE_URL_${PLATFORM_KEY}"
-  run_in_chroot build_chroot "wget ${!YCM_URL_TAG} -O /tmp/ycm.deb"
+  run_in_chroot build_chroot "wget ${YCM_PACKAGE_URL} -O /tmp/ycm.deb"
   run_in_chroot build_chroot "DEBIAN_FRONTEND=noninteractive; dpkg -i /tmp/ycm.deb; apt-get install -f"
   run_in_chroot build_chroot "DEBIAN_FRONTEND=noninteractive; dpkg -i /tmp/ycm.deb && touch /tmp/ycm-deb.done"
   if [ ! -e build_chroot/$CHROOT_BUILD/tmp/ycm-deb.done ]; then

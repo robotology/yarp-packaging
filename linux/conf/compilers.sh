@@ -1,8 +1,8 @@
-PLATFORMS="bionic buster focal"
+PLATFORMS="buster focal jammy"
 
 buster_MIRROR="http://deb.debian.org/debian"
-bionic_MIRROR="http://it.archive.ubuntu.com/ubuntu"
 focal_MIRROR="http://it.archive.ubuntu.com/ubuntu"
+jammy_MIRROR="http://it.archive.ubuntu.com/ubuntu"
 
 HARDWARE="amd64"
 
