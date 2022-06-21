@@ -149,7 +149,7 @@ run_in_chroot build_chroot "mkdir -p $CHROOT_BUILD && cd $CHROOT_BUILD && $CMAKE
 # Go ahead and make
 run_in_chroot build_chroot "cd $CHROOT_BUILD && make -j" || exit 1
 
-# Fix relocatable files
+# Fix non-relocatable files
 YARP_INI_PATH="$CHROOT_BUILD/share/yarp/config/path.d"
 YARP_INI_FILE="yarp.ini"
 
